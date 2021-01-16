@@ -1,0 +1,49 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version "1.4.10"
+    id("no.nils.wsdl2java") version "0.10"
+}
+
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+
+    wsdl2java("jakarta.xml.ws:jakarta.xml.ws-api:2.3.3")
+    wsdl2java("jakarta.annotation:jakarta.annotation-api:1.3.5")
+}
+
+//////////////////////// wsdl block ///////////////////////
+wsdl2java {
+    generatedWsdlDir = file("${project.buildDir}/generated-sources/wsdl")
+    wsdlDir = file("${project.projectDir}/src/main/resources/wsdl")
+    // define to support incremental build
+    wsdlsToGenerate = [
+            ["-xjc", "-wsdlLocation", "classpath:wsdl/currencyconvertor.wsdl",
+                    "${project.projectDir}/src/main/resources/wsdl/currencyconvertor.wsdl"]
+    ]
+}
+
+wsdl2javaExt {
+    cxfVersion = "3.3.2"
+}
+
+
+////////////////////// end wsdl block ///////////////////////
+
+sourceSets {
+    main {
+        java.srcDir("${project.buildDir}/generated-sources/wsdl")
+    }
+
+}
+
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '11'
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
